@@ -1,5 +1,5 @@
 {
-  "name": "@identity.com/prove-ethereum-wallet",
+  "name": "@civic/prove-ethereum-wallet",
   "version": "1.1.1",
   "description": "Library for providing a standard proof creation and verification for ethereum wallets",
   "main": "dist/index.js",
