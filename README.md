@@ -5,13 +5,13 @@ This library proves ownership of an Ethereum wallet to off-chain verifiers. To c
 ## Install
 
 ```sh
-npm install @identity.com/prove-ethereum-wallet
+npm install @civic/prove-ethereum-wallet
 ```
 
 or 
 
 ```sh
-yarn add @identity.com/prove-ethereum-wallet
+yarn add @civic/prove-ethereum-wallet
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ Prove ownership of an Ethereum wallet
 
 Prover side: 
 ```js
-const { create } = require('@identity.com/prove-ethereum-wallet');
+const { create } = require('@civic/prove-ethereum-wallet');
 const ownerWallet = Wallet.createRandom();
 
 const proof = await create((domain, types, message) => wallet._signTypedData(domain, types, message), { message: '<verifierUrl>' });
@@ -28,7 +28,7 @@ const proof = await create((domain, types, message) => wallet._signTypedData(dom
 
 Verifier side:
 ```js
-const { verify } = require('@identity.com/prove-ethereum-wallet');
+const { verify } = require('@civic/prove-ethereum-wallet');
 const success = await verify(expectedOwnerAddress, proof, { message: '<verifierUrl>' });
 ```
 
