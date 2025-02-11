@@ -1,5 +1,5 @@
-import { Wallet } from 'ethers';
 import { create, verify } from '../src';
+import { HDNodeWallet, Wallet } from 'ethers';
 
 const expired = {
   address: '0x33A17d5f19827EB220a3C05e33E5678A8b7b45Eb',
@@ -10,7 +10,7 @@ const expired = {
 describe('prove-ethereum-wallet', () => {
   afterEach(() => jest.restoreAllMocks());
 
-  let wallet: Wallet;
+  let wallet: HDNodeWallet;
   let message: string;
   beforeEach(() => {
     message = 'test';
@@ -18,14 +18,14 @@ describe('prove-ethereum-wallet', () => {
   });
 
   it('creates a wallet ownership proof when a signer function is provided', async () => {
-    const proof = await create((...args) => wallet._signTypedData(...args), {
+    const proof = await create((...args) => wallet.signTypedData(...args), {
       message,
     });
     expect(proof).toMatch(/.*\..*/); // the message is a base64 version of the signature concatenated with the message
   });
 
   it('verifies wallet ownership with provided signer function', async () => {
-    const proof = await create((...args) => wallet._signTypedData(...args), {
+    const proof = await create((...args) => wallet.signTypedData(...args), {
       message,
     });
     await expect(verify(wallet.address, proof, { message })).resolves.not.toThrow();
@@ -34,7 +34,7 @@ describe('prove-ethereum-wallet', () => {
   it('throws an error if the transaction is signed with a different key', async () => {
     const someOtherKey = Wallet.createRandom();
 
-    const proof = await create((...args) => wallet._signTypedData(...args), {
+    const proof = await create((...args) => wallet.signTypedData(...args), {
       message,
     });
     await expect(verify(someOtherKey.address, proof, { message })).rejects.toThrow();
@@ -45,14 +45,14 @@ describe('prove-ethereum-wallet', () => {
   });
 
   it("throws an error if the message doesn't match", async () => {
-    const proof = await create((...args) => wallet._signTypedData(...args), {
+    const proof = await create((...args) => wallet.signTypedData(...args), {
       message: 'bad',
     });
     await expect(verify(wallet.address, proof, { message: 'test' })).rejects.toThrow('Bad message');
   });
 
   it("throws an error if the verifierAddress doesn't match", async () => {
-    const proof = await create((...args) => wallet._signTypedData(...args), {
+    const proof = await create((...args) => wallet.signTypedData(...args), {
       verifierAddress: 'bad',
       types: {
         PoWo: [
@@ -75,7 +75,7 @@ describe('prove-ethereum-wallet', () => {
   });
 
   it('verifies wallet ownership when only verifier address is passed', async () => {
-    const proof = await create((...args) => wallet._signTypedData(...args), {
+    const proof = await create((...args) => wallet.signTypedData(...args), {
       verifierAddress: 'good',
       types: {
         PoWo: [

@@ -1,6 +1,6 @@
 {
   "name": "@civic/prove-ethereum-wallet",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Library for providing a standard proof creation and verification for ethereum wallets",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -35,9 +35,8 @@
     }
   ],
   "dependencies": {
-    "@ethersproject/abstract-signer": "^5.5.0",
     "buffer": "^6.0.3",
-    "ethers": "^5.5.1"
+    "ethers": "^6.13.5"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.0",
