@@ -1,5 +1,5 @@
-import yargs from 'yargs';
-import { verify } from '../../src/index';
+import yargs from "yargs";
+import { verify } from "../../src/index";
 
 /**
  * Usage: 
@@ -9,21 +9,21 @@ import { verify } from '../../src/index';
  */
 (async () => {
   const args = await yargs
-    .option('proof', {
+    .option("proof", {
       string: true,
     })
-    .option('address', {
+    .option("address", {
       string: true,
     })
-    .option('message', {
+    .option("message", {
       string: true,
     }).argv;
   console.log(args);
 
   const { proof, address } = args;
-  console.log('Attempting to verify ethereum proof', proof);
+  console.log("Attempting to verify ethereum proof", proof);
   const result = await verify(address as string, proof as string, {
-    message: 'https://passv2-dev.civic.com',
+    message: "https://passv2-dev.civic.com",
   });
   console.log(`Verify result: ${result}`);
 })();
