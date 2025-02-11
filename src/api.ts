@@ -1,16 +1,21 @@
-import { Buffer } from 'buffer';
-import { CreatePowoOptions, defaultDomain, EthPowoMessage, VerifyPowoOptions } from './types';
-import { TypedDataDomain, TypedDataField, verifyTypedData } from 'ethers';
+import { Buffer } from "buffer";
+import {
+  CreatePowoOptions,
+  defaultDomain,
+  EthPowoMessage,
+  VerifyPowoOptions,
+} from "./types";
+import { TypedDataDomain, TypedDataField, verifyTypedData } from "ethers";
 
 const getTypes = (verifierAddress?: string, message?: string) => {
   const useTypes = {
-    PoWo: [{ name: 'expires', type: 'string' }],
+    PoWo: [{ name: "expires", type: "string" }],
   };
   if (verifierAddress) {
-    useTypes.PoWo.push({ name: 'verifierAddress', type: 'string' });
+    useTypes.PoWo.push({ name: "verifierAddress", type: "string" });
   }
   if (message) {
-    useTypes.PoWo.push({ name: 'message', type: 'string' });
+    useTypes.PoWo.push({ name: "message", type: "string" });
   }
   return useTypes;
 };
@@ -19,9 +24,9 @@ export const create = async (
   signTypedData: (
     domain: TypedDataDomain,
     types: Record<string, TypedDataField[]>,
-    value: EthPowoMessage
+    value: EthPowoMessage,
   ) => Promise<string>,
-  { domain = defaultDomain, message, verifierAddress }: CreatePowoOptions
+  { domain = defaultDomain, message, verifierAddress }: CreatePowoOptions,
 ): Promise<string> => {
   const tokenDurationMs = 1000 * 5 * 60; // 5 minutes
   const expires = new Date(Date.now() + tokenDurationMs);
@@ -32,42 +37,53 @@ export const create = async (
   };
   const useTypes = getTypes(verifierAddress, message);
   const signature = await signTypedData(domain, useTypes, powoMessage);
-  if (!signature) throw new Error('Error creating powo');
+  if (!signature) throw new Error("Error creating powo");
 
   const msgString = JSON.stringify(powoMessage);
-  const messageB64 = Buffer.from(msgString).toString('base64');
-  const signatureB64 = Buffer.from(signature).toString('base64');
+  const messageB64 = Buffer.from(msgString).toString("base64");
+  const signatureB64 = Buffer.from(signature).toString("base64");
   return `${messageB64}.${signatureB64}`;
 };
 
 export const verify = async (
   address: string,
   proof: string,
-  { domain = defaultDomain, message, verifierAddress }: VerifyPowoOptions
+  { domain = defaultDomain, message, verifierAddress }: VerifyPowoOptions,
 ): Promise<boolean> => {
-  console.log('verifyPowo raw', { address, proof });
-  const [b64TypedMessage, signature] = proof.split('.');
-  const decodedSignature = Buffer.from(signature, 'base64').toString();
-  const decodedMessage = JSON.parse(Buffer.from(b64TypedMessage, 'base64').toString('utf-8')) as EthPowoMessage;
+  console.log("verifyPowo raw", { address, proof });
+  const [b64TypedMessage, signature] = proof.split(".");
+  const decodedSignature = Buffer.from(signature, "base64").toString();
+  const decodedMessage = JSON.parse(
+    Buffer.from(b64TypedMessage, "base64").toString("utf-8"),
+  ) as EthPowoMessage;
 
-  console.log('verifyPowo decoded', { decodedSignature, decodedMessage });
+  console.log("verifyPowo decoded", { decodedSignature, decodedMessage });
   const useTypes = getTypes(verifierAddress, message);
 
-  const recoveredAddress = verifyTypedData(domain, useTypes, decodedMessage, decodedSignature);
+  const recoveredAddress = verifyTypedData(
+    domain,
+    useTypes,
+    decodedMessage,
+    decodedSignature,
+  );
   if (recoveredAddress !== address) {
-    throw new Error('Message was signed by unexpected wallet');
+    throw new Error("Message was signed by unexpected wallet");
   }
 
   if (new Date(decodedMessage.expires).getTime() < Date.now()) {
-    throw new Error('Token Expired');
+    throw new Error("Token Expired");
   }
 
   if (decodedMessage.message && message && decodedMessage.message !== message) {
-    throw new Error('Bad message');
+    throw new Error("Bad message");
   }
 
-  if (decodedMessage.verifierAddress && verifierAddress && decodedMessage.verifierAddress !== verifierAddress) {
-    throw new Error('Bad verifier address');
+  if (
+    decodedMessage.verifierAddress &&
+    verifierAddress &&
+    decodedMessage.verifierAddress !== verifierAddress
+  ) {
+    throw new Error("Bad verifier address");
   }
   return true;
 };
