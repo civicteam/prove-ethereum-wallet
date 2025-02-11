@@ -1,4 +1,4 @@
-import { TypedDataDomain, TypedDataField } from 'ethers';
+import { TypedDataDomain, TypedDataField } from "ethers";
 
 export type Address = string;
 
@@ -9,14 +9,14 @@ export type EthPowoMessage = {
 };
 
 export const defaultDomain: TypedDataDomain = {
-  name: 'Proof Of Ethereum Wallet Ownership',
-  version: '1',
+  name: "Proof Of Ethereum Wallet Ownership",
+  version: "1",
 };
 
 export const defaultTypes: Record<string, Array<TypedDataField>> = {
   PoWo: [
-    { name: 'expires', type: 'string' },
-    { name: 'message', type: 'string' },
+    { name: "expires", type: "string" },
+    { name: "message", type: "string" },
   ],
 };
 
