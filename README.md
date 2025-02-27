@@ -23,7 +23,7 @@ Prover side:
 const { create } = require('@civic/prove-ethereum-wallet');
 const ownerWallet = Wallet.createRandom();
 
-const proof = await create((domain, types, message) => wallet._signTypedData(domain, types, message), { message: '<verifierUrl>' });
+const proof = await create((domain, types, message) => wallet.signTypedData(domain, types, message), { message: '<verifierUrl>' });
 ```
 
 Verifier side:

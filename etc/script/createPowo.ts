@@ -1,5 +1,5 @@
-import { create } from '../../src/index';
-import { Wallet } from 'ethers';
+import { create } from "../../src/index";
+import { Wallet } from "ethers";
 
 /**
  * Usage: 
@@ -8,8 +8,9 @@ import { Wallet } from 'ethers';
 (async () => {
   const wallet = Wallet.createRandom();
 
-  const signFn = (_domain, _types, _message) => wallet._signTypedData(_domain, _types, _message);
+  const signFn = (_domain, _types, _message) =>
+    wallet.signTypedData(_domain, _types, _message);
 
-  const proof = await create(signFn, { message: 'test' });
+  const proof = await create(signFn, { message: "test" });
   console.log({ address: wallet.address, proof });
 })();
